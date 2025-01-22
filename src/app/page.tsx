@@ -27,7 +27,7 @@ export default function Home() {
 function Hero() {
   return (
     <section className="container mx-auto px-4 py-20">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+      <div className="flex flex-col items-center lg:flex-row lg:items-start lg:justify-between gap-12">
         <LeftSection />
         <RightSection />
       </div>
@@ -37,9 +37,9 @@ function Hero() {
 
 function LeftSection() {
   return (
-    <div className="w-full lg:w-1/2 text-center lg:text-left">
+    <div className="flex flex-col items-center w-full lg:w-1/2 text-center lg:text-left">
       <BoxReveal boxColor="#ef6f2c" duration={0.5}>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold p-2">
+        <h1 className=" text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold p-2">
           Jomajo<span className="text-[#ef6f2c]">.</span>
         </h1>
       </BoxReveal>
@@ -62,9 +62,11 @@ function LeftSection() {
       </BoxReveal>
 
       <BoxReveal boxColor="#ef6f2c" duration={0.5}>
-        <button className="mt-8 bg-[#ef6f2c] hover:bg-[#d15d1e] text-white px-8 py-3 rounded-full text-lg sm:text-xl font-medium transition-colors duration-300">
-          Explore
-        </button>
+        <Link href="/menu">
+          <button className=" mt-8 bg-[#ef6f2c] hover:bg-[#d15d1e] text-white px-8 py-3 rounded-full text-lg sm:text-xl font-medium transition-colors duration-300">
+            Explore
+          </button>
+        </Link>
       </BoxReveal>
     </div>
   )
@@ -72,7 +74,7 @@ function LeftSection() {
 
 function RightSection() {
   return (
-    <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+    <div className="w-full lg:w-1/2 flex justify-center">
       <BoxReveal boxColor="#ef6f2c" duration={0.5}>
         <div className="relative w-full max-w-md">
           <Image
@@ -109,10 +111,7 @@ function DecorativeSvg() {
         strokeWidth="3"
       />
     </svg>
-    
-    
   )
-  
 }
 
 const features = [
@@ -185,35 +184,34 @@ function PopularDishes() {
               transition={{ duration: 0.5 }}
             >
               <Card className="overflow-hidden">
-              <Link href="/menu">
-                <CardHeader className="p-0">
-                  <Image
-                    src={dish.image || "/placeholder.svg"}
-                    alt={dish.name}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 object-cover"
-                  />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-xl mb-2">{dish.name}</CardTitle>
-                  <CardDescription className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                    <span className="font-semibold mr-1">{dish.rating}</span>
-                    <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
-                  </CardDescription>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center p-4">
-                  <div>
-                    <span className="text-lg font-bold text-[#ef6f2c]">₹{dish.price}</span>
-                    {dish.vegetarian && (
-                      <Badge variant="secondary" className="ml-2">
-                        Veg
-                      </Badge>
-                    )}
-                  </div>
-                 
-                </CardFooter>
+                <Link href="/menu">
+                  <CardHeader className="p-0">
+                    <Image
+                      src={dish.image || "/placeholder.svg"}
+                      alt={dish.name}
+                      width={300}
+                      height={200}
+                      className="w-full h-48 object-cover"
+                    />
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <CardTitle className="text-xl mb-2">{dish.name}</CardTitle>
+                    <CardDescription className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                      <span className="font-semibold mr-1">{dish.rating}</span>
+                      <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
+                    </CardDescription>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center p-4">
+                    <div>
+                      <span className="text-lg font-bold text-[#ef6f2c]">₹{dish.price}</span>
+                      {dish.vegetarian && (
+                        <Badge variant="secondary" className="ml-2">
+                          Veg
+                        </Badge>
+                      )}
+                    </div>
+                  </CardFooter>
                 </Link>
               </Card>
             </motion.div>
