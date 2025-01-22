@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Image from "next/image"
 import { Star } from "lucide-react"
+import Link from "next/link"
 
 export default function Page() {
   const { addToCart } = useCart()
@@ -17,12 +18,12 @@ export default function Page() {
   const [categoryFilter, setCategoryFilter] = useState("")
 
   const filteredDishes = dishes.filter(
-    (dish:any) =>
+    (dish: any) =>
       dish.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (categoryFilter === "" || dish.category === categoryFilter),
   )
 
-  const categories = Array.from(new Set(dishes.map((dish:any) => dish.category)))
+  const categories = Array.from(new Set(dishes.map((dish: any) => dish.category)))
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -50,25 +51,27 @@ export default function Page() {
         </Select>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredDishes.map((dish:any) => (
+        {filteredDishes.map((dish: any) => (
           <Card key={dish.id} className="overflow-hidden">
-            <CardHeader className="p-0">
-              <Image
-                src={dish.image || "/placeholder.svg"}
-                alt={dish.name}
-                width={300}
-                height={200}
-                className="w-full h-48 object-cover"
-              />
-            </CardHeader>
-            <CardContent className="p-4">
-              <CardTitle className="text-xl mb-2">{dish.name}</CardTitle>
-              <CardDescription className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                <span className="font-semibold mr-1">{dish.rating}</span>
-                <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
-              </CardDescription>
-            </CardContent>
+            <Link href={`/dish/${dish.id}`}>
+              <CardHeader className="p-0">
+                <Image
+                  src={dish.image || "/placeholder.svg"}
+                  alt={dish.name}
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover"
+                />
+              </CardHeader>
+              <CardContent className="p-4">
+                <CardTitle className="text-xl mb-2">{dish.name}</CardTitle>
+                <CardDescription className="flex items-center">
+                  <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                  <span className="font-semibold mr-1">{dish.rating}</span>
+                  <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
+                </CardDescription>
+              </CardContent>
+            </Link>
             <CardFooter className="flex justify-between items-center p-4">
               <div>
                 <span className="text-lg font-bold text-[#ef6f2c]">₹{dish.price}</span>

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { BoxReveal } from "@/components/ui/box-reveal"
 import { useCart } from "@/components/CartContext"
 import { dishes } from "@/data/dishes"
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -184,6 +185,7 @@ function PopularDishes() {
               transition={{ duration: 0.5 }}
             >
               <Card className="overflow-hidden">
+              <Link href="/menu">
                 <CardHeader className="p-0">
                   <Image
                     src={dish.image || "/placeholder.svg"}
@@ -210,10 +212,9 @@ function PopularDishes() {
                       </Badge>
                     )}
                   </div>
-                  <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id)}>
-                    Add to Cart
-                  </Button>
+                 
                 </CardFooter>
+                </Link>
               </Card>
             </motion.div>
           ))}
