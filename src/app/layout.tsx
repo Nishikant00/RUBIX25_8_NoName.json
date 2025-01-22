@@ -1,10 +1,15 @@
+//eslint disable @typescript-eslint/no-unused-vars
+//eslint disable @typescript-eslint/no-explicit-any
+//eslint disable @typescript-eslint/no-unused-vars 
+//eslint disable @typescript-eslint/no-empty-object-type 
+
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { CartProvider } from "@/components/CartContext";
 import { Roboto } from 'next/font/google'
- 
+
 const roboto = Roboto({
   weight: '400',
   subsets: ['latin'],
