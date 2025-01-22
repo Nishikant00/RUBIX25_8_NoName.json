@@ -21,12 +21,7 @@ export function CartPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       <SheetContent side="right" className="w-[300px] sm:w-[400px]">
         <SheetHeader>
           <SheetTitle>Your Cart</SheetTitle>
-          <SheetClose asChild>
-            <Button variant="ghost" size="icon" className="absolute right-4 top-4">
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </SheetClose>
+         
         </SheetHeader>
         <div className="mt-8 space-y-4">
           {cartItems.length === 0 ? (

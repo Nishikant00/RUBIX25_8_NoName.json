@@ -63,7 +63,7 @@ export function Navbar() {
               <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white">
                 <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
                 <div className="flex items-center justify-center mb-6 ">
-                  <Image src="/pizza.png" alt="Pizza" width={80} height={80} />
+                  <Image src="/pizza.png" alt="Pizza" width={80} height={80} priority/>
                 </div>
                 <nav className="flex flex-col gap-4">
                   {navItems.map((item) => (
@@ -81,7 +81,7 @@ export function Navbar() {
             </Sheet>
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-orange-700 hidden md:block">
-                <Image src="/pizza.png" alt="Pizza" width={50} height={50} />
+                <Image src="/pizza.png" alt="Pizza" width={50} height={50} priority />
               </span>
             </Link>
           </div>
@@ -104,7 +104,7 @@ export function Navbar() {
               <Link href="/signin">Sign In</Link>
             </Button>
             <Button asChild className="bg-orange-600 text-white hover:bg-orange-700 hidden md:inline-flex">
-              <Link href="/signup">Get Started</Link>
+              <Link href="/menu">Get Started</Link>
             </Button>
           </div>
         </div>

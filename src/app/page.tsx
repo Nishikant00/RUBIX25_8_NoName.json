@@ -91,8 +91,8 @@ function DecorativeSvg() {
   return (
     <svg
       className="absolute top-48 right-[870px] hidden xl:block"
-      width="100"
-      height="150"
+      width="50"
+      height="70"
       viewBox="0 0 65 112"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +108,10 @@ function DecorativeSvg() {
         strokeWidth="3"
       />
     </svg>
+    
+    
   )
+  
 }
 
 const features = [
