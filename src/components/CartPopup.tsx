@@ -9,8 +9,10 @@ import { dishes } from "@/data/dishes"
 export function CartPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { cart, removeFromCart } = useCart()
 
+
+
   const cartItems = cart.map((item) => {
-    const dish = dishes.find((d) => d.id === item.id)
+    const dish = dishes.find((d) => d.id.toString() === item.item_id)
     return { ...item, ...dish }
   })
 
@@ -35,7 +37,7 @@ export function CartPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
                 </div>
                 <div className="flex items-center space-x-2">
                   <p>${((item.price || 0) * item.quantity).toFixed(2)}</p>
-                  <Button variant="ghost" size="sm" onClick={() => removeFromCart(item.id)}>
+                  <Button variant="ghost" size="sm" onClick={() => removeFromCart(item.item_id)}>
                     Remove
                   </Button>
                 </div>

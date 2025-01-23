@@ -52,8 +52,12 @@ const addReview = (data:any, token:any) => {
 const showFoodItemReviews = (data:any) => {
     return axiosInstance.post('store/show_food_item_reviews/', data);
 };
+
 const sentimentAnalysis = (data:any) => {
     return axiosInstance.post('sentiment_analysis/', data);
+};
+const demandAnalysis = (data:any) => {
+    return axiosInstance.post('demand_analysis/', data);
 };
 
 const apiServices = {
@@ -65,7 +69,8 @@ const apiServices = {
     createOrder,
     addReview,
     showFoodItemReviews,
-    sentimentAnalysis
+    sentimentAnalysis,
+    demandAnalysis
 };
 
 export default apiServices;

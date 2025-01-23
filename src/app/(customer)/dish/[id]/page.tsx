@@ -103,7 +103,7 @@ export default function DishPage() {
               )}
             </div>
           </div>
-          <Button className="w-full bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id)}>
+          <Button className="w-full bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id.toString(), dish.price)}>
             Add to Cart
           </Button>
         </CardContent>

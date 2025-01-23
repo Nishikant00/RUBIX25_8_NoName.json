@@ -1,17 +1,21 @@
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { DSidebar } from "@/components/DSidebar"
 
-export default function DashboardLayout({
+
+export default function Layout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="flex h-screen overflow-hidden">
-      <DSidebar />
-      <main className="flex-1 overflow-auto p-6">
-        <div className="max-w-7xl mx-auto">{children}</div>
-      </main>
-    </div>
+          <SidebarProvider>
+            <div className="flex h-screen overflow-hidden">
+              <DSidebar />
+              <SidebarInset>
+                <main className="flex-1 overflow-y-auto p-6">{children}</main>
+              </SidebarInset>
+            </div>
+          </SidebarProvider>
   )
 }
 

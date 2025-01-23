@@ -12,6 +12,7 @@ import Image from "next/image"
 import { Star, Loader2 } from "lucide-react"
 import Link from "next/link"
 import apiServices, { ngrok_url } from "@/services/api"
+import { mock_customer_token } from "@/data/userdata"
 
 interface MenuItem {
   id: string
@@ -33,7 +34,7 @@ export default function Page() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
+  
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -60,7 +61,6 @@ export default function Page() {
     fetchMenuItems()
   }, [])
 
-  // Use API data if available, otherwise fallback to dummy data
   const itemsToDisplay = menuItems.length > 0 ? menuItems : dishes
 
   const filteredDishes = itemsToDisplay.filter((dish: any) => {
@@ -145,7 +145,7 @@ export default function Page() {
                   </Badge>
                 )}
               </div>
-              <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id)}>
+              <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id, dish.price)}>
                 Add to Cart
               </Button>
             </CardFooter>
