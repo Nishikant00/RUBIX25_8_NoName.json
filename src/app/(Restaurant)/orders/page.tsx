@@ -2,21 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import apiServices from "@/services/api";
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Truck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export default function Page() {
-  const [delivery, setDelivery] = useState<any>([]);
-  const [sortConfig, setSortConfig] = useState({ 
-    key: 'order_date', 
-    direction: 'descending' 
+export default function DeliveryOrdersPage() {
+  const [delivery, setDelivery] = useState([]);
+  const [sortConfig, setSortConfig] = useState({
+    key: 'order_date',
+    direction: 'descending'
   });
 
   useEffect(() => {
@@ -26,6 +27,8 @@ export default function Page() {
         setDelivery(response.data);
       } catch (error) {
         console.error("Failed to fetch delivery orders:", error);
+        // Consider adding user-friendly error handling, 
+        // such as a toast notification or error state
       }
     };
     fetchDeliveryOrders();
@@ -41,7 +44,7 @@ export default function Page() {
     return 0;
   });
 
-  const requestSort = (key:any) => {
+  const requestSort = (key: string) => {
     let direction = 'descending';
     if (sortConfig.key === key && sortConfig.direction === 'descending') {
       direction = 'ascending';
@@ -49,12 +52,15 @@ export default function Page() {
     setSortConfig({ key, direction });
   };
 
+  const handleTakeOrder = (orderId: string) => {
+        // iDHR LOGIV AYEGA
+    console.log(`Taking order: ${orderId}`);
+  };
+
   return (
-    <Card className="w-full max-w-6xl mx-auto shadow-lg">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-gray-800">
-          Delivery Orders
-        </CardTitle>
+        <CardTitle>Delivery Orders</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -65,7 +71,7 @@ export default function Page() {
                 onClick={() => requestSort('order_date')}
               >
                 <div className="flex items-center">
-                  Order Date
+                  Order Date 
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
@@ -74,32 +80,38 @@ export default function Page() {
                 onClick={() => requestSort('delivery_address')}
               >
                 <div className="flex items-center">
-                  Delivery Address
+                  Delivery Address 
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
               <TableHead 
-                className="cursor-pointer hover:bg-gray-100 text-right"
+                className="cursor-pointer hover:bg-gray-100"
                 onClick={() => requestSort('total_price')}
               >
-                <div className="flex items-center justify-end">
-                  Total Price
+                <div className="flex items-center">
+                  Total Price 
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedOrders.map((order, index) => (
-              <TableRow key={index} className="hover:bg-gray-50">
-                <TableCell className="font-medium">
+            {sortedOrders.map((order:any, index) => (
+              <TableRow key={order.id || index}>
+                <TableCell>
                   {new Date(order.order_date).toLocaleDateString()}
                 </TableCell>
+                <TableCell>{order.delivery_address}</TableCell>
+                <TableCell>₹{order.total_price.toLocaleString()}</TableCell>
                 <TableCell>
-                  {order.delivery_address}
-                </TableCell>
-                <TableCell className="text-right">
-                  ₹{order.total_price.toLocaleString()}
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleTakeOrder(order.id)}
+                  >
+                    <Truck className="mr-2 h-4 w-4" /> Take Order
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
