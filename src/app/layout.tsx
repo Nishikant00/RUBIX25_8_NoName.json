@@ -1,10 +1,8 @@
 
 import type { Metadata } from "next";
-import { Footer } from "@/components/Footer";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { CartProvider } from "@/components/CartContext";
 import { Roboto } from 'next/font/google'
+import { CartProvider } from "@/components/CartContext";
 
 const roboto = Roboto({
   weight: '400',
@@ -28,12 +26,8 @@ export default function RootLayout({
       <body
         className={`${roboto.className} h-screen antialiased`}
         >
-        
-        <CartProvider>
-          <Navbar/>
-          {children}
-          <Footer/>
-        </CartProvider>
+          
+          <CartProvider>{children}</CartProvider>
         
       </body>
     </html>

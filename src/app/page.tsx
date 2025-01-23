@@ -11,15 +11,19 @@ import { BoxReveal } from "@/components/ui/box-reveal"
 import { useCart } from "@/components/CartContext"
 import { dishes } from "@/data/dishes"
 import Link from "next/link"
+import { Navbar } from "@/components/Navbar"
+import { Footer } from "@/components/Footer"
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fdf0ea]">
+      <Navbar/>
       <Hero />
       <Features />
       <PopularDishes />
       <Testimonials />
       <DecorativeSvg />
+      <Footer/>
     </main>
   )
 }
@@ -37,7 +41,7 @@ function Hero() {
 
 function LeftSection() {
   return (
-    <div className="flex flex-col items-center w-full lg:w-1/2 text-center lg:text-left">
+    <div className="mt-24 flex flex-col items-center w-full lg:w-1/2 text-center lg:text-left">
       <BoxReveal boxColor="#ef6f2c" duration={0.5}>
         <h1 className=" text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold p-2">
           Jomajo<span className="text-[#ef6f2c]">.</span>
