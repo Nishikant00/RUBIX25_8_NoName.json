@@ -1,10 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { useParams } from "next/navigation"
-import { dishes } from "@/data/dishes"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react"
+import { useParams, useSearchParams } from "next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { Star } from "lucide-react"
@@ -19,6 +17,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import apiServices, { ngrok_url } from "@/services/api"
+import { mock_customer_token } from "@/data/userdata"
 
 interface Review {
   id: number
@@ -28,57 +28,58 @@ interface Review {
   avatar?: string
 }
 
-const initialReviews: Review[] = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    rating: 5,
-    comment: "Absolutely delicious! The flavors were perfectly balanced.",
-    avatar: "/avatars/alice.jpg",
-  },
-  {
-    id: 2,
-    name: "Bob Smith",
-    rating: 4,
-    comment: "Great dish, but could use a bit more spice.",
-    avatar: "/avatars/bob.jpg",
-  },
-  {
-    id: 3,
-    name: "Carol White",
-    rating: 5,
-    comment: "One of the best meals I've had in a long time!",
-    avatar: "/avatars/carol.jpg",
-  },
-]
-
 export default function DishPage() {
-  const { id } = useParams()
+  const { id }:{id:string} = useParams()
   const { addToCart } = useCart()
-  const dish = dishes.find((d) => d.id.toString() === id)
-  const [reviews, setReviews] = useState<Review[]>(initialReviews)
+  const [reviews, setReviews] = useState<any>([])
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const name = searchParams.get('name') || ''
+  const rating = searchParams.get('rating') || '0'
+  const image = searchParams.get('image') || '/placeholder.svg'
+  const price = searchParams.get('price') || '0'
 
-  if (!dish) {
-    return <div>Dish not found</div>
-  }
-
-  const handleSubmitReview = (newReview: Omit<Review, "id">) => {
-    const review = {
-      id: Date.now(),
-      ...newReview,
+  useEffect(() => {
+    if (id) {
+      const fetchReviews = async () => {
+        try {
+          const fetchedReviews = await apiServices.showFoodItemReviews({ item_id: id as string });
+          setReviews(fetchedReviews.data.reviews);
+          console.log(reviews)
+        } catch (error) {
+          console.error('Failed to fetch reviews:', error);
+          setReviews([]); 
+        }
+      };
+      fetchReviews();
     }
-    setReviews([...reviews, review])
-    setIsReviewModalOpen(false)
+  }, [id]);
+
+  const handleSubmitReview = async (newReview: Omit<Review, "id">) => {
+    try {
+      await apiServices.addReview(
+        {"item_id":id?.toString(), "review":newReview.comment},
+        mock_customer_token,
+      );
+      
+      const review = {
+        id: Date.now(),
+        ...newReview,
+      };
+      setReviews([...reviews, review]);
+      setIsReviewModalOpen(false);
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+    }
   }
 
   return (
-    <div className="mt-24 container mx-auto px-4 py-8">
+    <div className="mt-24 container mx-auto px-4 py-8 h-screen">
       <Card className="max-w-3xl mx-auto mb-8">
         <CardHeader className="p-0">
           <Image
-            src={dish.image || "/placeholder.svg"}
-            alt={dish.name}
+            src={ngrok_url+image}
+            alt={name}
             width={800}
             height={400}
             className="w-full h-64 object-cover"
@@ -87,23 +88,18 @@ export default function DishPage() {
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <CardTitle className="text-3xl mb-2">{dish.name}</CardTitle>
+              <CardTitle className="text-3xl mb-2">{name}</CardTitle>
               <CardDescription className="flex items-center">
                 <Star className="w-5 h-5 text-yellow-400 mr-1" />
-                <span className="font-semibold mr-1">{dish.rating}</span>
-                <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
+                <span className="font-semibold mr-1">{rating}</span>
+                <span className="text-sm text-gray-500">({reviews.length} reviews)</span>
               </CardDescription>
             </div>
-            <div className="text-right">
-              <span className="text-2xl font-bold text-[#ef6f2c]">₹{dish.price}</span>
-              {dish.vegetarian && (
-                <Badge variant="secondary" className="ml-2">
-                  Veg
-                </Badge>
-              )}
-            </div>
           </div>
-          <Button className="w-full bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id.toString(), dish.price)}>
+          <Button 
+            className="w-full bg-[#ef6f2c] hover:bg-[#d15d1e]" 
+            onClick={() => addToCart(id.toString(), Number(price))}
+          >
             Add to Cart
           </Button>
         </CardContent>
@@ -127,36 +123,34 @@ export default function DishPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {reviews.map((review) => (
-              <Card key={review.id}>
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarImage src={review.avatar} />
-                      <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-lg">{review.name}</CardTitle>
-                      <CardDescription className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < review.rating ? "text-yellow-400" : "text-gray-300"}`}
-                          />
-                        ))}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p>{review.comment}</p>
-                </CardContent>
-              </Card>
+          {reviews.map((review: any, index: number) => (
+  <Card key={index}>
+    <CardHeader>
+      <div className="flex items-center space-x-4">
+        <Avatar>
+          <AvatarImage src={review.avatar} />
+          <AvatarFallback>{review.name?.[0] || 'U'}</AvatarFallback>
+        </Avatar>
+        <div>
+          <CardDescription className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${i < review.stars ? "text-yellow-400" : "text-gray-300"}`}
+              />
             ))}
+          </CardDescription>
+        </div>
+      </div>
+    </CardHeader>
+    <CardContent>
+      <p>{review.review}</p>
+    </CardContent>
+  </Card>
+))}
           </div>
         </CardContent>
       </Card>
     </div>
   )
 }
-

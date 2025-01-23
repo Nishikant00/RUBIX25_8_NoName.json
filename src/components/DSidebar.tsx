@@ -17,9 +17,10 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/orders", icon: ShoppingCart, label: "Orders" },
+  { href: "/reviews", icon: ShoppingCart, label: "Reviews" },
   { href: "/demand", icon: TrendingUp, label: "Demand" },
   { href: "/waste", icon: Trash2, label: "Waste" },
+  { href: "/orders", icon: ShoppingCart, label: "Deliveries" },
 ]
 
 export function DSidebar() {

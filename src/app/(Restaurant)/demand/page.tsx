@@ -27,51 +27,8 @@ interface DashboardData {
   category_time_result: DataByTime
 }
 
-const dummyData: DashboardData = {
-  item_time_result: {
-    Morning: [
-      { name: "Coffee", total_price: 1000 },
-      { name: "Sandwich", total_price: 1500 },
-    ],
-    Afternoon: [
-      { name: "Salad", total_price: 1200 },
-      { name: "Juice", total_price: 800 },
-    ],
-  },
-  item_season_result: {
-    Summer: [
-      { name: "Ice Cream", total_price: 2000 },
-      { name: "Cold Drinks", total_price: 1800 },
-    ],
-    Winter: [
-      { name: "Hot Chocolate", total_price: 1500 },
-      { name: "Soup", total_price: 1700 },
-    ],
-  },
-  category_season_result: {
-    Summer: [
-      { category: "Desserts", total_price: 3000 },
-      { category: "Beverages", total_price: 2500 },
-    ],
-    Winter: [
-      { category: "Hot Beverages", total_price: 2800 },
-      { category: "Soups", total_price: 2200 },
-    ],
-  },
-  category_time_result: {
-    Morning: [
-      { category: "Breakfast", total_price: 3500 },
-      { category: "Beverages", total_price: 2000 },
-    ],
-    Evening: [
-      { category: "Snacks", total_price: 2800 },
-      { category: "Desserts", total_price: 2500 },
-    ],
-  },
-}
-
 export default function DemandDashboard() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -80,15 +37,14 @@ export default function DemandDashboard() {
       try {
         const result = await apiServices.demandAnalysis("")
         if (result && Object.keys(result).length > 0) {
-          setData(result)
+          console.log(result.data)
+          setData(result.data)
         } else {
-          console.log("API returned empty data. Using dummy data.")
-          setData(dummyData)
+          setError("No data available")
         }
       } catch (err) {
         console.error("Error fetching data:", err)
-        console.log("Error occurred. Using dummy data.")
-        setData(dummyData)
+        setError("Error fetching data")
       } finally {
         setLoading(false)
       }
@@ -97,12 +53,16 @@ export default function DemandDashboard() {
     fetchData()
   }, [])
 
-  const prepareChartData = (data: DataByTime | DataBySeason) => {
+  const prepareChartData = (data: DataByTime | DataBySeason | undefined) => {
+    if (!data) return []
     return Object.entries(data).map(([key, value]) => ({
       name: key,
       ...value.reduce(
         (acc, item) => {
-          acc[item.name || item.category || ""] = item.total_price
+          const itemKey = item.name || item.category || ""
+          if (itemKey) {
+            acc[itemKey] = item.total_price
+          }
           return acc
         },
         {} as { [key: string]: number },
@@ -130,7 +90,7 @@ export default function DemandDashboard() {
   return (
     <div className="container mx-auto py-10">
       <h2 className="text-3xl font-bold tracking-tight mb-6">Demand Dashboard</h2>
-      <div className="mr-8 grid grid-cols-1 lg:grid-cols-2 gap-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard title="Items by Time of Day" data={itemTimeData} />
         <ChartCard title="Items by Season" data={itemSeasonData} />
         <ChartCard title="Categories by Season" data={categorySeasonData} />
@@ -142,8 +102,7 @@ export default function DemandDashboard() {
 
 function ChartCard({ title, data }: { title: string; data: any[] }) {
   return (
-
-    <Card className="mx-8 md:w-[400px] lg:w-[800px] h-[400px]">
+    <Card className="w-[300px] md:w-[500px] h-[400px]">
       <CardHeader>
         <CardTitle className="text-lg">{title}</CardTitle>
       </CardHeader>

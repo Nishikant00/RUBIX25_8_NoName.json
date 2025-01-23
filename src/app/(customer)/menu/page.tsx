@@ -115,7 +115,17 @@ export default function Page() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredDishes.map((dish: any) => (
           <Card key={dish.id} className="overflow-hidden">
-            <Link href={`/dish/${dish.id}`}>
+            <Link 
+              href={{
+                pathname: `/dish/${dish.id}`,
+                query: {
+                  name: dish.name,
+                  rating: dish.rating,
+                  image: dish.product_image,
+                  price: dish.base_price
+                }
+              }}
+            >
               <CardHeader className="p-0">
                 <Image
                   src={ngrok_url+dish.product_image || dish.image || "/placeholder.svg"}
@@ -145,7 +155,7 @@ export default function Page() {
                   </Badge>
                 )}
               </div>
-              <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id, dish.price)}>
+              <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id, dish.dynamic_price)}>
                 Add to Cart
               </Button>
             </CardFooter>

@@ -15,7 +15,6 @@ const navItems = [
   { name: "Home", href: "/" },
   { name: "Menu", href: "/menu" },
   { name: "Restaurants", href: "/restaurants" },
-  { name: "Reviews", href: "/reviews" },
 ]
 
 export function Navbar() {

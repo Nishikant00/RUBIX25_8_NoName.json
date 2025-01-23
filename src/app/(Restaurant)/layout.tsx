@@ -9,12 +9,8 @@ export default function Layout({
 }) {
   return (
           <SidebarProvider>
-            <div className="flex h-screen overflow-hidden">
               <DSidebar />
-              <SidebarInset>
                 <main className="flex-1 overflow-y-auto p-6">{children}</main>
-              </SidebarInset>
-            </div>
           </SidebarProvider>
   )
 }

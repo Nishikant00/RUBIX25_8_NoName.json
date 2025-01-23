@@ -1,53 +1,46 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import * as React from "react"
 import { LocationSearch } from "@/components/LocationSearch"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Star } from "lucide-react"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
-interface Restaurant {
-  id: number
+interface RestaurantData {
+  rest_id: string
   name: string
-  cuisine: string
-  rating: number
-  image: string
-}
-
-const fetchRestaurants = async (location: string): Promise<Restaurant[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  return [
-    { id: 1, name: "Pasta Paradise", cuisine: "Italian", rating: 4.5, image: "/restaurant1.jpg" },
-    { id: 2, name: "Sushi Sensation", cuisine: "Japanese", rating: 4.8, image: "/restaurant2.jpg" },
-    { id: 3, name: "Burger Bliss", cuisine: "American", rating: 4.2, image: "/restaurant3.jpg" },
-  ]
+  location: {
+    lat: number
+    lon: number
+  }
+  address: string
+  id: string
 }
 
 export default function RestaurantSearch() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [restaurants, setRestaurants] = useState<RestaurantData[]>([])
   const [showResults, setShowResults] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const backgroundImages = ["/carousel1.jpg", "/carousel2.jpg", "/carousel3.png"]
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length)
-    }, 5000)
+  const handleLocationChange = () => {
+    const mockResponse = {
+      "data": [
+        {"data":{"rest_id":"9","name":"Mumbai Bites","location":{"lat":19.14979142005578,"lon":72.70838399584551},"address":"137 High Street, Andheri, Mumbai"},"id":"L-Vgk5QBUURvwbVkbcRM"},
+        {"data":{"rest_id":"17","name":"Bollywood Bites","location":{"lat":19.189978329950648,"lon":73.14603978433172},"address":"160 Link Road, Bandra, Mumbai"},"id":"NeVlk5QBUURvwbVkFMTj"}
+      ]
+    };
 
-    return () => clearInterval(interval)
-  }, [])
+    const parsedRestaurants = mockResponse.data.map(item => ({
+      ...item.data,
+      id: item.id
+    }));
 
-  const handleLocationChange = async (location: string) => {
-    setIsLoading(true)
-    setShowResults(true)
-    const results = await fetchRestaurants(location)
-    setRestaurants(results)
-    setIsLoading(false)
+    setRestaurants(parsedRestaurants);
+    setShowResults(true);
   }
 
   return (
@@ -92,35 +85,22 @@ export default function RestaurantSearch() {
       <Dialog open={showResults} onOpenChange={setShowResults}>
         <DialogTitle/>
         <DialogContent className="sm:max-w-[600px]">
-          {isLoading ? (
-            <p className="p-4 text-center text-gray-600">Searching for the best spots...</p>
-          ) : (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold">Restaurants Near You</h2>
-              {restaurants.map((restaurant) => (
-                <div key={restaurant.id} className="flex items-center space-x-4 p-4 bg-gray-100 rounded-lg">
-                  <Image
-                    src={restaurant.image || "/placeholder.svg"}
-                    alt={restaurant.name}
-                    width={100}
-                    height={100}
-                    className="rounded-lg object-cover"
-                  />
-                  <div>
-                    <h3 className="text-lg font-semibold">{restaurant.name}</h3>
-                    <p className="text-gray-600">{restaurant.cuisine}</p>
-                    <div className="flex items-center mt-1">
-                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                      <span>{restaurant.rating}</span>
-                    </div>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Restaurants Near You</h2>
+            {restaurants.map((restaurant) => (
+              <div key={restaurant.id} className="flex items-center space-x-4 p-4 bg-gray-100 rounded-lg">
+                <div>
+                  <h3 className="text-lg font-semibold">{restaurant.name}</h3>
+                  <p className="text-gray-600">{restaurant.address}</p>
+                  <div className="text-sm text-gray-500 mt-1">
+                    ID: {restaurant.id}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
   )
 }
-

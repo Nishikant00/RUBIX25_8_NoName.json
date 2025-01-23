@@ -1,7 +1,14 @@
 import axios from 'axios';
-export const ngrok_url='https://a8c4-43-231-238-206.ngrok-free.app'
+export const ngrok_url='https://47e2-43-231-238-206.ngrok-free.app'
+export const ngrok_url2='https://af38-43-231-238-206.ngrok-free.app'
 const axiosInstance = axios.create({
     baseURL: `${ngrok_url}/`,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+const axiosInstance2 = axios.create({
+    baseURL: `${ngrok_url2}/`,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -52,12 +59,21 @@ const addReview = (data:any, token:any) => {
 const showFoodItemReviews = (data:any) => {
     return axiosInstance.post('store/show_food_item_reviews/', data);
 };
+const deliveryOrders = (data:any) => {
+    return axiosInstance.post('/store/show_orders_to_partner/', data);
+};
 
 const sentimentAnalysis = (data:any) => {
-    return axiosInstance.post('sentiment_analysis/', data);
+    return axiosInstance2.post('sentiment_analysis/', data);
+};
+const getResto = (data:any) => {
+    return axiosInstance2.post('/get_nearby_restaurants', data);
 };
 const demandAnalysis = (data:any) => {
-    return axiosInstance.post('demand_analysis/', data);
+    return axiosInstance2.post('demand_analysis/', data);
+};
+const wastageAnalysis = (data:any) => {
+    return axiosInstance2.post('wastage_analysis/', data);
 };
 
 const apiServices = {
@@ -70,7 +86,10 @@ const apiServices = {
     addReview,
     showFoodItemReviews,
     sentimentAnalysis,
-    demandAnalysis
+    demandAnalysis,
+    wastageAnalysis,
+    deliveryOrders,
+    getResto
 };
 
 export default apiServices;

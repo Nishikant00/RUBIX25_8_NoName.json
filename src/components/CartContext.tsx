@@ -3,6 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState } from "react"
 import apiServices from "@/services/api"
+import { mock_customer_token } from "@/data/userdata"
 
 type CartItem = {
   item_id: string
@@ -33,9 +34,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         quantity: quantity,
       }
 
-      const customerToken = localStorage.getItem("customerToken") || "mock_customer_token"
 
-      const response = await apiServices.addToCart(cartData, customerToken)
+      const response = await apiServices.addToCart(cartData, mock_customer_token)
 
       if (response) {
         setCart((prevCart) => {
