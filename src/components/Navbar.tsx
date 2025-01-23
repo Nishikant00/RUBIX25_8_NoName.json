@@ -103,7 +103,7 @@ export function Navbar() {
               <Link href="/signin">Sign In</Link>
             </Button>
             <Button asChild className="bg-orange-600 text-white hover:bg-orange-700 hidden md:inline-flex">
-              <Link href="/menu">Get Started</Link>
+              <Link href="/reviews">Get Started</Link>
             </Button>
           </div>
         </div>
