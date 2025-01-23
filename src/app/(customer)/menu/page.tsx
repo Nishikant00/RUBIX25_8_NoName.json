@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCart } from "@/components/CartContext"
 import { dishes } from "@/data/dishes"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,21 +9,83 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Image from "next/image"
-import { Star } from "lucide-react"
+import { Star, Loader2 } from "lucide-react"
 import Link from "next/link"
+import apiServices, { ngrok_url } from "@/services/api"
+
+interface MenuItem {
+  id: string
+  name: string
+  product_image: string
+  category: string
+  description: string
+  base_price: string
+  restaurant_info: {
+    id: number
+  }
+  dynamic_price: number
+}
 
 export default function Page() {
   const { addToCart } = useCart()
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const filteredDishes = dishes.filter(
-    (dish: any) =>
-      dish.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (categoryFilter === "" || dish.category === categoryFilter),
-  )
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const data = new FormData()
+        data.append("id", "3")
+        const response = await apiServices.showItems(data)
 
-  const categories = Array.from(new Set(dishes.map((dish: any) => dish.category)))
+        if (response.data?.data && Array.isArray(response.data.data)) {
+          console.log("API Response Data:", response.data.data)
+          setMenuItems(response.data.data)
+        } else {
+          console.warn("Invalid API response, using fallback data")
+          setMenuItems([])
+        }
+      } catch (error) {
+        console.error("Error fetching menu items:", error)
+        setError("Failed to load menu items")
+        setMenuItems([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchMenuItems()
+  }, [])
+
+  // Use API data if available, otherwise fallback to dummy data
+  const itemsToDisplay = menuItems.length > 0 ? menuItems : dishes
+
+  const filteredDishes = itemsToDisplay.filter((dish: any) => {
+    const nameMatch = dish.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const categoryMatch = categoryFilter === "" || categoryFilter === "all" || dish.category === categoryFilter
+    return nameMatch && categoryMatch
+  })
+
+  const categories = Array.from(new Set(itemsToDisplay.map((dish: any) => dish.category)))
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-red-500 text-center">{error}. Showing fallback data.</div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -56,7 +118,7 @@ export default function Page() {
             <Link href={`/dish/${dish.id}`}>
               <CardHeader className="p-0">
                 <Image
-                  src={dish.image || "/placeholder.svg"}
+                  src={ngrok_url+dish.product_image || dish.image || "/placeholder.svg"}
                   alt={dish.name}
                   width={300}
                   height={200}
@@ -67,14 +129,16 @@ export default function Page() {
                 <CardTitle className="text-xl mb-2">{dish.name}</CardTitle>
                 <CardDescription className="flex items-center">
                   <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                  <span className="font-semibold mr-1">{dish.rating}</span>
-                  <span className="text-sm text-gray-500">({dish.reviews} reviews)</span>
+                  <span className="font-semibold mr-1">{dish.rating || "N/A"}</span>
+                  <span className="text-sm text-gray-500">({dish.reviews || 0} reviews)</span>
                 </CardDescription>
               </CardContent>
             </Link>
             <CardFooter className="flex justify-between items-center p-4">
               <div>
-                <span className="text-lg font-bold text-[#ef6f2c]">₹{dish.price}</span>
+                <span className="text-lg font-bold text-[#ef6f2c]">
+                  ₹{dish.dynamic_price || dish.base_price || dish.price}
+                </span>
                 {dish.vegetarian && (
                   <Badge variant="secondary" className="ml-2">
                     Veg
