@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useCart } from "@/components/CartContext"
 import { dishes } from "@/data/dishes"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Image from "next/image"
-import { Star, Loader2 } from "lucide-react"
+import { Star, Loader2, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import apiServices, { ngrok_url } from "@/services/api"
 import { mock_customer_token } from "@/data/userdata"
+
 
 interface MenuItem {
   id: string
@@ -34,7 +35,10 @@ export default function Page() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
+  const [showPopup, setShowPopup] = useState(false)
+  const [addedDishName, setAddedDishName] = useState("")
+  const [showLoader, setShowLoader] = useState(true)
+
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -70,6 +74,24 @@ export default function Page() {
   })
 
   const categories = Array.from(new Set(itemsToDisplay.map((dish: any) => dish.category)))
+
+  const handleAddToCart = useCallback(
+    (id: string, price: number, name: string) => {
+      addToCart(id, price)
+      setAddedDishName(name)
+      setShowPopup(true)
+      setShowLoader(true)
+
+      setTimeout(() => {
+        setShowLoader(false)
+      }, 1000)
+
+      setTimeout(() => {
+        setShowPopup(false)
+      }, 2000)
+    },
+    [addToCart],
+  )
 
   if (isLoading) {
     return (
@@ -115,20 +137,20 @@ export default function Page() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredDishes.map((dish: any) => (
           <Card key={dish.id} className="overflow-hidden">
-            <Link 
+            <Link
               href={{
                 pathname: `/dish/${dish.id}`,
                 query: {
                   name: dish.name,
                   rating: dish.rating,
                   image: dish.product_image,
-                  price: dish.base_price
-                }
+                  price: dish.base_price,
+                },
               }}
             >
               <CardHeader className="p-0">
                 <Image
-                  src={ngrok_url+dish.product_image || dish.image || "/placeholder.svg"}
+                  src={ngrok_url + dish.product_image || dish.image || "/placeholder.svg"}
                   alt={dish.name}
                   width={300}
                   height={200}
@@ -155,13 +177,30 @@ export default function Page() {
                   </Badge>
                 )}
               </div>
-              <Button className="bg-[#ef6f2c] hover:bg-[#d15d1e]" onClick={() => addToCart(dish.id, dish.dynamic_price)}>
+              <Button
+                className="bg-[#ef6f2c] hover:bg-[#d15d1e]"
+                onClick={() => handleAddToCart(dish.id, dish.dynamic_price || dish.base_price || dish.price, dish.name)}
+              >
                 Add to Cart
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <div className="text-center">
+              {showLoader ? (
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+              ) : (
+                <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-4" />
+              )}
+              <p className="text-lg font-semibold">{addedDishName} added to the cart</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
