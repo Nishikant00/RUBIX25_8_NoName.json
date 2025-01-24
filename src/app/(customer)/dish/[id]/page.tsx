@@ -74,7 +74,7 @@ export default function DishPage() {
   }
 
   return (
-    <div className="mt-24 container mx-auto px-4 py-8 h-screen">
+    <div className="mt-24 container mx-auto px-4 py-8 vh-screen">
       <Card className="max-w-3xl mx-auto mb-8">
         <CardHeader className="p-0">
           <Image
@@ -122,32 +122,32 @@ export default function DishPage() {
           </Dialog>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-4 ">
           {reviews.map((review: any, index: number) => (
-  <Card key={index}>
-    <CardHeader>
-      <div className="flex items-center space-x-4">
-        <Avatar>
-          <AvatarImage src={review.avatar} />
-          <AvatarFallback>{review.name?.[0] || 'U'}</AvatarFallback>
-        </Avatar>
-        <div>
-          <CardDescription className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${i < review.stars ? "text-yellow-400" : "text-gray-300"}`}
-              />
-            ))}
-          </CardDescription>
-        </div>
-      </div>
-    </CardHeader>
-    <CardContent>
-      <p>{review.review}</p>
-    </CardContent>
-  </Card>
-))}
+          <Card key={index}>
+            <CardHeader>
+              <div className="flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage src={review.avatar} />
+                  <AvatarFallback>{review.name?.[0] || 'U'}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardDescription className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < review.stars ? "text-yellow-400" : "text-gray-300"}`}
+                      />
+                    ))}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p>{review.review}</p>
+            </CardContent>
+          </Card>
+        ))}
           </div>
         </CardContent>
       </Card>

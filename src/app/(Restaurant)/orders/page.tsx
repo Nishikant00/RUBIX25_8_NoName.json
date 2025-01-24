@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { ArrowUpDown, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function DeliveryOrdersPage() {
   const [delivery, setDelivery] = useState([]);
@@ -52,10 +53,7 @@ export default function DeliveryOrdersPage() {
     setSortConfig({ key, direction });
   };
 
-  const handleTakeOrder = (orderId: string) => {
-        // iDHR LOGIV AYEGA
-    console.log(`Taking order: ${orderId}`);
-  };
+
 
   return (
     <Card className="w-full">
@@ -105,13 +103,23 @@ export default function DeliveryOrdersPage() {
                 <TableCell>{order.delivery_address}</TableCell>
                 <TableCell>₹{order.total_price.toLocaleString()}</TableCell>
                 <TableCell>
+                    <Link 
+                  href={{
+                    pathname: `/order/${order.id}`,
+                    query: {
+                      date: order.order_date,
+                      address: order.delivery_address,
+                      total: order.total_price,
+                    }
+                  }}
+                >
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleTakeOrder(order.id)}
                   >
                     <Truck className="mr-2 h-4 w-4" /> Take Order
                   </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

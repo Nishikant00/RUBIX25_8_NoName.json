@@ -53,12 +53,13 @@ export function CartPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       {
         "restaurant_id":3,
         "delivery_address":"Mazgaon mumbai",
-        "lat":72.164,
-        "lon":18.245,
+        "lat":18.96557198837548,
+        "lon":72.84444538022963,
         "date":"23/1/2025",
         "total_price":total,
         "time_of_order":"afternoon"
     }
+    
     const response=await apiServices.createOrder(cartcheckoutData,mock_customer_token)
     setCartItems([])
     console.log(response.data.mssg)
